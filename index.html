@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI記事ライター | キーワード入力だけでSEO記事を自動生成</title>
+<meta name="description" content="キーワードを入力するだけでSEOに強いブログ記事を自動生成するAIツール。ブログ運営・アフィリエイトの記事作成時間を大幅に削減。">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic UI', sans-serif;
+    color:#222; line-height:1.7; background:#fff;
+  }
+  a { text-decoration:none; }
+  .container { max-width:960px; margin:0 auto; padding:0 20px; }
+
+  /* Hero */
+  .hero {
+    background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #A855F7 100%);
+    color:#fff; padding:90px 20px 80px; text-align:center; position:relative; overflow:hidden;
+  }
+  .hero::after{
+    content:""; position:absolute; inset:0;
+    background: radial-gradient(circle at 20% 20%, rgba(255,255,255,.15), transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(255,255,255,.12), transparent 40%);
+  }
+  .hero-inner{ position:relative; z-index:1; }
+  .badge {
+    display:inline-block; background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.5);
+    padding:6px 18px; border-radius:999px; font-size:13px; font-weight:700; letter-spacing:.05em; margin-bottom:24px;
+  }
+  .hero h1 { font-size:clamp(28px,5vw,46px); font-weight:900; margin-bottom:18px; }
+  .hero h1 span { display:block; font-size:.55em; font-weight:700; opacity:.9; margin-bottom:10px; }
+  .hero p.lead { font-size:clamp(15px,2.2vw,19px); opacity:.95; max-width:640px; margin:0 auto 34px; }
+  .cta-btn {
+    display:inline-block; background:#fff; color:#4F46E5; font-weight:800; font-size:17px;
+    padding:16px 40px; border-radius:50px; box-shadow:0 10px 30px rgba(0,0,0,.2); transition:transform .2s;
+  }
+  .cta-btn:hover { transform:translateY(-3px); }
+  .cta-sub { margin-top:14px; font-size:13px; opacity:.85; }
+
+  section { padding:70px 20px; }
+  h2.section-title { text-align:center; font-size:clamp(22px,4vw,32px); font-weight:900; margin-bottom:48px; color:#1e1b3a; }
+  h2.section-title small { display:block; font-size:14px; font-weight:700; color:#7C3AED; margin-bottom:8px; letter-spacing:.1em; }
+
+  /* Problems */
+  .problems { background:#F7F5FF; }
+  .problem-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:24px; }
+  .problem-card {
+    background:#fff; border-radius:16px; padding:32px 24px; box-shadow:0 4px 20px rgba(79,70,229,.08);
+    border-top:4px solid #7C3AED;
+  }
+  .problem-card .icon { font-size:34px; margin-bottom:14px; }
+  .problem-card h3 { font-size:17px; margin-bottom:10px; color:#1e1b3a; }
+  .problem-card p { font-size:14px; color:#555; }
+
+  /* Features */
+  .feature-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:22px; }
+  .feature-card {
+    padding:28px 22px; border-radius:16px; background:#fff; border:1px solid #ECE9FE;
+    box-shadow:0 6px 18px rgba(79,70,229,.06); text-align:center;
+  }
+  .feature-card .icon {
+    width:60px; height:60px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(135deg,#4F46E5,#A855F7); font-size:28px; margin:0 auto 16px; color:#fff;
+  }
+  .feature-card h3 { font-size:16px; margin-bottom:8px; color:#1e1b3a; }
+  .feature-card p { font-size:13.5px; color:#555; }
+
+  /* Pricing */
+  .pricing { background:#F7F5FF; }
+  .price-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:28px; max-width:760px; margin:0 auto; }
+  .price-card {
+    background:#fff; border-radius:20px; padding:36px 28px; text-align:center; box-shadow:0 6px 24px rgba(79,70,229,.1);
+    border:2px solid transparent; position:relative;
+  }
+  .price-card.recommend { border-color:#7C3AED; transform:scale(1.04); }
+  .price-card .tag {
+    position:absolute; top:-14px; left:50%; transform:translateX(-50%); background:#7C3AED; color:#fff;
+    font-size:12px; font-weight:700; padding:5px 16px; border-radius:999px;
+  }
+  .price-card h3 { font-size:18px; margin-bottom:10px; color:#1e1b3a; }
+  .price-card .price { font-size:34px; font-weight:900; color:#4F46E5; margin-bottom:6px; }
+  .price-card .price span { font-size:14px; font-weight:600; color:#888; }
+  .price-card ul { list-style:none; margin:20px 0; text-align:left; font-size:14px; color:#444; }
+  .price-card ul li { padding:6px 0; padding-left:24px; position:relative; }
+  .price-card ul li::before { content:"✓"; position:absolute; left:0; color:#7C3AED; font-weight:900; }
+
+  .cta-section {
+    background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #A855F7 100%);
+    color:#fff; text-align:center; padding:80px 20px;
+  }
+  .cta-section h2 { font-size:clamp(22px,4vw,30px); font-weight:900; margin-bottom:16px; }
+  .cta-section p { opacity:.9; margin-bottom:32px; }
+
+  footer { background:#1e1b3a; color:#bbb; text-align:center; padding:36px 20px; font-size:13px; }
+  footer a { color:#c9bfff; }
+
+  @media (max-width:600px){ section{padding:50px 16px;} .hero{padding:70px 16px 60px;} }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="container hero-inner">
+    <span class="badge">🖊️ AI BLOG WRITER</span>
+    <h1><span>キーワードを入れるだけで</span>SEOに強いブログ記事を自動生成</h1>
+    <p class="lead">構成案・見出し・本文まで、AIがまるっと執筆。ブログ運営・アフィリエイト・オウンドメディアの記事作成時間を1/10に。</p>
+    <a class="cta-btn" href="https://ai-blog-writer-ai.fly.dev/">今すぐ無料で試す →</a>
+    <div class="cta-sub">無料体験版を公開中！登録不要ですぐ使えます</div>
+  </div>
+</header>
+
+<section class="problems">
+  <div class="container">
+    <h2 class="section-title"><small>PROBLEM</small>こんなお悩みありませんか？</h2>
+    <div class="problem-grid">
+      <div class="problem-card">
+        <div class="icon">😩</div>
+        <h3>記事1本書くのに3〜4時間かかる</h3>
+        <p>構成を考えて、調べて、書いて…気づけば1日が終わっている。</p>
+      </div>
+      <div class="problem-card">
+        <div class="icon">📉</div>
+        <h3>SEOの知識がなく上位表示されない</h3>
+        <p>キーワード選定や見出し構成のコツが分からず、検索順位が伸びない。</p>
+      </div>
+      <div class="problem-card">
+        <div class="icon">🔁</div>
+        <h3>更新が続かず放置してしまう</h3>
+        <p>ネタ切れ・時間不足でブログの更新頻度がどんどん落ちていく。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <h2 class="section-title"><small>FEATURE</small>AIブログ記事自動生成ツールの特徴</h2>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="icon">⌨️</div>
+        <h3>キーワード入力だけでOK</h3>
+        <p>狙いたいキーワードを入れるだけで、構成から本文まで自動生成。</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">📊</div>
+        <h3>SEO最適化構成</h3>
+        <p>検索意図を分析し、上位表示を狙える見出し構成を自動設計。</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">📝</div>
+        <h3>3000〜5000字の長文対応</h3>
+        <p>読み応えのある長文記事もワンクリックで一気に生成。</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🎨</div>
+        <h3>文体・トンマナ調整</h3>
+        <p>フォーマル・カジュアルなど記事のトーンを自由にカスタマイズ。</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">📤</div>
+        <h3>WordPress連携対応予定</h3>
+        <p>生成した記事をそのまま下書き投稿できる連携機能を開発中。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="pricing">
+  <div class="container">
+    <h2 class="section-title"><small>PRICING</small>料金プラン</h2>
+    <div class="price-grid">
+      <div class="price-card">
+        <h3>ライトプラン</h3>
+        <div class="price">¥1,980<span>/月</span></div>
+        <ul>
+          <li>月5記事まで生成</li>
+          <li>SEO構成自動作成</li>
+          <li>メールサポート</li>
+        </ul>
+      </div>
+      <div class="price-card recommend">
+        <span class="tag">人気No.1</span>
+        <h3>スタンダードプラン</h3>
+        <div class="price">¥3,980<span>/月</span></div>
+        <ul>
+          <li>記事生成 無制限</li>
+          <li>SEO構成自動作成</li>
+          <li>文体カスタマイズ</li>
+          <li>優先サポート</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="container">
+    <h2>記事作成の時間を、もっと有意義なことに。</h2>
+    <p>無料体験版を公開中。まずは実際に記事を生成して効果を試してください。</p>
+    <a class="cta-btn" href="https://ai-blog-writer-ai.fly.dev/">今すぐ無料で試す →</a>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>© 2026 AI Blog Writer. All rights reserved.</p>
+    <p><a href="mailto:suico415@gmail.com">suico415@gmail.com</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
